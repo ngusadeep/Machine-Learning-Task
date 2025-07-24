@@ -1,5 +1,5 @@
-from task003c import CA , FM , GRADES , remarks
-
+from task003c import CA , FM , GRADES , remarks, test_one, test_two
+from collections import Counter
 from openpyxl import load_workbook
 
 new_stdsscores=[
@@ -254,6 +254,7 @@ new_stdsscores=[
 [249,50.6,65.7,87],
 [250,41.6,68.5,94.2]]
 
+
 for nc_1 in range(len(new_stdsscores)):
     new_stdsscores[nc_1].append(CA[nc_1])
 for nc_2 in range(len(new_stdsscores)):
@@ -263,7 +264,7 @@ for nc_3 in range(len(new_stdsscores)):
 for nc_4 in range(len(new_stdsscores)):
     new_stdsscores[nc_4].append(remarks[nc_4])
 
-# Load workbook and get second sheet
+#3(c)
 wb = load_workbook('./task002task.xlsx')
 sheet = wb[wb.sheetnames[0]]  # second sheet
 
@@ -276,7 +277,7 @@ for row in sheet.iter_rows(min_row=2, max_col=8, max_row=251, values_only=True):
 if len(new_stdsscores) != len(excel_data):
     print(f"Row count mismatch: Python list has {len(new_stdsscores)} rows, Excel sheet has {len(excel_data)} rows")
 else:
-    print(f"✅ Both have {len(new_stdsscores)} rows, proceeding with comparison...")
+    print(f"Both have {len(new_stdsscores)} rows, proceeding with comparison...")
 
 
 mismatches = []
@@ -287,12 +288,100 @@ for i, (py_row, xl_row) in enumerate(zip(new_stdsscores, excel_data), start=1):
 
 
 if not mismatches:
-    print("✅ All rows match exactly.")
+    print("All rows match exactly.")
 else:
-    print(f"❌ Found {len(mismatches)} mismatched rows:")
+    print(f"Found {len(mismatches)} mismatched rows:")
     # for idx, py_r, xl_r in mismatches:
         # print(f" Row {idx}:")
         # print(f"   Python: {py_r}")
         # print(f"   Excel : {xl_r}")
 
-print(f'Last 5 rows of the list are : {new_stdsscores[-5:]}')
+print(f'Last 5 rows of the list are : {new_stdsscores[-5:]}\n')
+
+#3(d)
+
+num_columns = len(new_stdsscores[0])
+max_values_per_column = []
+min_values_per_column = []
+
+for col_idx in range(num_columns):
+    column_values = [row[col_idx] for row in new_stdsscores]
+    max_values_per_column.append(max(column_values))
+    min_values_per_column.append(min(column_values))
+
+print(f"          Test1  Test2 CA   UE    FM")
+print(f"Maximum : {max_values_per_column[1:6]}")
+print(f"Minimum : {min_values_per_column[1:6]}\n")
+
+#3(e)
+
+column_index = 3
+column_values = [row[column_index] for row in new_stdsscores]
+max_value_column = max(column_values)
+min_value_column = min(column_values)
+
+print(f"Highest FM : {max_value_column}")
+print(f"Lowest FM : {min_value_column}\n")
+
+#3(f)
+gradesSummary = {}
+gradesSummary = dict(Counter(GRADES))
+gradesSummary = dict(sorted(gradesSummary.items()))
+print(f'Grades Summary : {gradesSummary}\n')
+
+#3(g)
+
+
+highest = max(gradesSummary.values())
+lowest = min(gradesSummary.values())
+
+highest_grades = [grade for grade, count in gradesSummary.items() if count == highest]
+lowest_grades = [grade for grade, count in gradesSummary.items() if count == lowest]
+
+print(f"Grade(s) with the lowest number of students are: {', '.join(lowest_grades)} and number of students is: {lowest}")
+print(f"Grade(s) with the highest number of students are: {', '.join(highest_grades)} and number of students is: {highest}\n")
+
+#3(h)
+
+min_s_n = new_stdsscores[0][0]
+max_s_n = new_stdsscores[-1][0]
+
+try:
+    
+    s_n = int(input(f"Enter the S/N ({min_s_n} to {max_s_n}): "))
+
+    found = False
+    for record in new_stdsscores:
+        if record[0] == s_n:
+            print(f"\nRecord for S/N {s_n}:")
+            print(f"Scores: {record[1:]}\n")
+            found = True
+            break
+
+    if not found:
+        print(f"\n Not correct, Valid ranges is btn {min_s_n} to {max_s_n}. Try again!\n")
+
+except ValueError:
+    print("\nInvalid input! try again.\n")
+   
+#3(i)
+# Step 1: Calculate values
+new_id = 251
+test1 = 45.6
+test2 = 76.4
+fm = 65.5
+newCA = test1 + test2
+newFM = fm 
+grade = 'B+'
+remark = 'P'
+
+new_stdsscores.append([new_id, test1, test2, fm, newCA, newFM, grade, remark])
+print('New Scores:')
+for row in new_stdsscores[-5:]:
+    print(f'{row}\n')
+    
+#compare data inserted if they match student's
+if new_stdsscores[250][0] != new_id:
+    print(f'Stdent mismatch!')
+else:
+    print(f'Student match!')

@@ -1,4 +1,8 @@
-stdsscores=[
+from task003c import CA , FM , GRADES , remarks
+
+from openpyxl import load_workbook
+
+new_stdsscores=[
 [1,59.4,26.3,81.8],
 [2,65.9,29.6,100],
 [3,70.7,56.3,70.5],
@@ -250,5 +254,45 @@ stdsscores=[
 [249,50.6,65.7,87],
 [250,41.6,68.5,94.2]]
 
+for nc_1 in range(len(new_stdsscores)):
+    new_stdsscores[nc_1].append(CA[nc_1])
+for nc_2 in range(len(new_stdsscores)):
+    new_stdsscores[nc_2].append(FM[nc_2])
+for nc_3 in range(len(new_stdsscores)):
+    new_stdsscores[nc_3].append(GRADES[nc_3])
+for nc_4 in range(len(new_stdsscores)):
+    new_stdsscores[nc_4].append(remarks[nc_4])
 
-print(stdsscores[-5:])
+# Load workbook and get second sheet
+wb = load_workbook('./task002task.xlsx')
+sheet = wb[wb.sheetnames[0]]  # second sheet
+
+# Read all rows from the sheet, assuming 4 columns per row
+excel_data = []
+for row in sheet.iter_rows(min_row=2, max_col=8, max_row=251, values_only=True):
+    excel_data.append(list(row))
+
+# Now compare row-by-row
+if len(new_stdsscores) != len(excel_data):
+    print(f"Row count mismatch: Python list has {len(new_stdsscores)} rows, Excel sheet has {len(excel_data)} rows")
+else:
+    print(f"✅ Both have {len(new_stdsscores)} rows, proceeding with comparison...")
+
+
+mismatches = []
+
+for i, (py_row, xl_row) in enumerate(zip(new_stdsscores, excel_data), start=1):
+    if py_row != xl_row:
+        mismatches.append((i, py_row, xl_row))
+
+
+if not mismatches:
+    print("✅ All rows match exactly.")
+else:
+    print(f"❌ Found {len(mismatches)} mismatched rows:")
+    # for idx, py_r, xl_r in mismatches:
+        # print(f" Row {idx}:")
+        # print(f"   Python: {py_r}")
+        # print(f"   Excel : {xl_r}")
+
+print(f'Last 5 rows of the list are : {new_stdsscores[-5:]}')
